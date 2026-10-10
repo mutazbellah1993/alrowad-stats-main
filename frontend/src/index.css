@@ -1,0 +1,198 @@
+@import "@fontsource-variable/cairo/wght.css";
+@import "tailwindcss";
+
+/*
+ * Light, warm identity taken from the Al-Rowad logo: orange shield (#EF5A27 → #F6951D),
+ * a gold accent used sparingly, charcoal text on white and warm paper backgrounds.
+ * Chart colours are validated (CVD separation, contrast) and mirrored in chartTheme.ts.
+ */
+@theme {
+  --font-sans: "Cairo Variable", "Cairo", system-ui, sans-serif;
+
+  --color-paper: #faf7f2;
+  --color-paper-deep: #f3ede4;
+  --color-surface: #ffffff;
+  --color-line: #ebe3d8;
+  --color-line-strong: #dcd1c2;
+
+  --color-ink: #1d2025;
+  --color-ink-soft: #454a52;
+  --color-ink-muted: #656a73;
+
+  --color-brand: #ef5a27;
+  --color-brand-bright: #f6951d;
+  /* Orange dark enough for text and white-on-orange buttons (AA). */
+  --color-brand-ink: #b23d0f;
+  --color-brand-soft: #fdeee6;
+  --color-brand-wash: #fff7f2;
+  --color-gold: #f2b705;
+  --color-gold-soft: #fdf3d3;
+
+  --color-male: #2193c7;
+  --color-female: #8f4bc9;
+  --color-total: #4a505a;
+
+  --color-danger: #b42318;
+  --color-danger-soft: #fdecea;
+
+  --shadow-card: 0 1px 2px rgb(29 32 37 / 0.04), 0 6px 20px -10px rgb(29 32 37 / 0.12);
+  --shadow-lift: 0 2px 4px rgb(29 32 37 / 0.05), 0 14px 32px -14px rgb(29 32 37 / 0.22);
+
+  --animate-enter: enter 0.42s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-fade: fade 0.22s ease-out both;
+  --animate-shimmer: shimmer 1.4s linear infinite;
+
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes emoji-float {
+    from {
+      transform: translate3d(0, 0, 0) rotate(-4deg);
+    }
+    to {
+      transform: translate3d(0, -18px, 0) rotate(5deg);
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    background: var(--color-paper);
+  }
+
+  /* Latin digits stay aligned and keep their order inside Arabic text. */
+  .num {
+    font-variant-numeric: tabular-nums lining-nums;
+    direction: ltr;
+    unicode-bidi: isolate;
+    display: inline-block;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-brand);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+
+  ::selection {
+    background: var(--color-brand);
+    color: #fff;
+  }
+}
+
+@layer components {
+  .skeleton {
+    background: linear-gradient(90deg, #f1ebe2 25%, #f8f4ee 37%, #f1ebe2 63%);
+    background-size: 400% 100%;
+    animation: var(--animate-shimmer);
+    border-radius: 12px;
+  }
+
+  /* Staggered entrance, used only on first load (see useIntro). */
+  .intro {
+    animation: var(--animate-enter);
+  }
+
+  /* Thin arc inspired by the logo's shield, used as a quiet header accent. */
+  .brand-rule {
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-brand) 0%, var(--color-brand-bright) 55%, var(--color-gold) 100%);
+  }
+
+  /* Humanitarian symbols behind the content: very low opacity, slow transform-only float. */
+  .emoji-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .emoji-float {
+    position: absolute;
+    opacity: 0.07;
+    line-height: 1;
+    will-change: transform;
+    animation: emoji-float ease-in-out infinite alternate;
+    animation-play-state: paused;
+  }
+  .emoji-backdrop[data-running='true'] .emoji-float {
+    animation-play-state: running;
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Reduced motion: no entrance, tweens, floating symbols or animated transitions. */
+@media (prefers-reduced-motion: reduce) {
+  .emoji-float {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  body {
+    background: #fff;
+    /* Keep track colours and chart fills when printing / saving as PDF. */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .avoid-break {
+    break-inside: avoid;
+  }
+}

@@ -1,0 +1,60 @@
+### أمثلة طلبات إحصاءات الرواد (VS Code REST Client / IntelliJ HTTP Client)
+### شغّل الـbackend أولًا:  php artisan serve  (المنفذ 8000)
+
+@base = http://127.0.0.1:8000/api/v1
+
+### فحص التشغيل
+GET {{base}}/health
+Accept: application/json
+
+### المؤسسات
+GET {{base}}/institutions
+Accept: application/json
+
+### خيارات الفلاتر: المسارات الخمسة وكتالوج المشاريع (56) والفترات والمكاتب
+GET {{base}}/filters?institution=rowad
+Accept: application/json
+
+### النظرة العامة — كل السجلات المستوردة (الأسر في other_measures)
+GET {{base}}/dashboard?institution=rowad
+Accept: application/json
+
+### المسار: الثقافة والرياضة والتسلية والفنون — 11 مشروعًا مصنفًا
+GET {{base}}/dashboard?institution=rowad&sector=cul
+Accept: application/json
+
+### مسار بلا بيانات — has_data=false، والأرقام null، و15 مشروعًا مصنفًا
+GET {{base}}/dashboard?institution=rowad&sector=dev
+Accept: application/json
+
+### المشروع مع مكتب جرابلس — المتوقع: 120 / 130 / 250
+GET {{base}}/dashboard?institution=rowad&sector=cul&project=loba-wa-farha&office=jarabulus
+Accept: application/json
+
+### خطأ 422: مشروع لا يتبع المسار المحدد
+GET {{base}}/dashboard?institution=rowad&sector=hlt&project=loba-wa-farha
+Accept: application/json
+
+### خطأ 422: صيغة فترة غير صحيحة
+GET {{base}}/dashboard?institution=rowad&period=2026-13
+Accept: application/json
+
+### مستوى المشروع: الأنشطة الرئيسية (Level 2) لرواد المعرفة
+GET {{base}}/dashboard?institution=rowad&sector=edu&project=road-almaarf
+Accept: application/json
+
+### مستوى النشاط الرئيسي: الأنشطة الفرعية (Level 3) — مجموعها = إجمالي النشاط
+GET {{base}}/dashboard?institution=rowad&sector=edu&project=road-almaarf&main_activity=bkloryos
+Accept: application/json
+
+### مستوى النشاط الفرعي
+GET {{base}}/dashboard?institution=rowad&sector=edu&project=athr&main_activity=tlab-mnktaayn&sub_activity=tasaa
+Accept: application/json
+
+### سجلات بلا تصنيف لسنتها (2025)
+GET {{base}}/dashboard?institution=rowad&sector=unclassified
+Accept: application/json
+
+### خطأ 422: نشاط رئيسي لا يتبع المشروع
+GET {{base}}/dashboard?institution=rowad&project=athr&main_activity=bkloryos
+Accept: application/json
